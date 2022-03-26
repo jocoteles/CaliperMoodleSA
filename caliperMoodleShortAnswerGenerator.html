@@ -1,0 +1,415 @@
+<html>
+
+<head>
+    <style type="text/css">
+        body {
+			padding: 2%;
+            display: grid;
+            grid-template-rows: 2fr 1fr 3fr;
+            grid-template-columns: 1fr;
+        }
+        #screen {
+            background-color:papayawhip;
+        }
+    </style>    
+</head>
+
+<body>
+	<div>
+	<h1><center>Moodle short answers question generator for Caliper</center></h1>		
+    <div>
+        <label for="questionText">Question text:</label><br>
+        <textarea id="questionText" rows="4" cols="50">
+Enter the caliper reading in millimeters with the correct number of decimal places.
+        </textarea>
+    </div>
+    <div>
+        <label for="supplementaryInstructions">Supplementary instructions:</label><br>
+        <textarea id="supplementaryInstructions" rows="4" cols="50">
+To zoom in on the caliper, use the mouse wheel.
+To pan the caliper as a whole, keep the left mouse button pressed while panning across the screen.
+        </textarea>
+    </div>
+    <div id="caliperTypes">
+        <span>Types of calipers to be included in the questions:</span>			
+        <div>           				
+            <input type="checkbox" name="calip5" value="5" onchange="updateDivisions(this.value)" checked>
+            <label for="5"> 5 divisions of the Vernier</label><br>
+            <input type="checkbox" name="calip10" value="10" onchange="updateDivisions(this.value)" checked>
+            <label for="10"> 10 divisions of the Vernier</label><br>
+            <input type="checkbox" name="calip20" value="20" onchange="updateDivisions(this.value)" checked>
+            <label for="20"> 20 divisions of the Vernier</label><br>            
+            <input type="checkbox" name="calip50" value="50" onchange="updateDivisions(this.value)" checked>
+            <label for="50"> 50 divisions of the Vernier</label>         
+        </div>
+    </div>
+    <div>
+        <label for="numberQuestions">Number of random questions (1 - 1000): </label>
+        <input type="number" id="numberQuestions" min="1" max="1000" step="1" value="100" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+    </div>
+
+    <div id="decimalSeparator">
+        <span>Decimal separators accepted:</span>			
+        <div>           				
+            <input type="checkbox" name="dot" value="dot" onchange="updateDecimal(this.value)" checked>
+            <label for="dot"> dot</label><br>
+            <input type="checkbox" name="comma" value="comma" onchange="updateDecimal(this.value)" checked>
+            <label for="comma"> comma</label>
+        </div>
+    </div>
+    <div>
+        <label for="penalty">Penalty for each wrong attempt (0.0 - 1.0): </label>
+        <input type="number" id="penalty" min="0" max="1.0">
+    </div>
+	
+    <button onclick="generateXML()">Generate Moodle XML</button>
+    <button onclick="genCanvas()">Generate Canvas</button>    
+
+	<div style="display: grid; grid-template-columns: 1fr 1fr;">
+		<div>
+			<input id="slider" type="range" min="0" max="5400" value="0" class="slider" onchange="moveVernier()">
+			<input type="checkbox" id="showValue" name="value" onchange="writePosition()"><label for="value">Mostrar leitura: </label>
+			<span id="position"></span>
+		</div>    
+
+		<div id="divisions">
+			<span>Divisões do Vernier:</span>			
+			<div>           				
+				<input type="radio" name="divRadio" value="5" onchange="updateDivisions(this.value)" checked>
+				<span> 5 </span><br>
+				<input type="radio" name="divRadio" value="10" onchange="updateDivisions(this.value)">
+				<span> 10 </span><br>
+				<input type="radio" name="divRadio" value="20" onchange="updateDivisions(this.value)">
+				<span> 20 </span><br>            
+				<input type="radio" name="divRadio" value="50" onchange="updateDivisions(this.value)">
+				<span> 50 </span><br>            
+			</div>
+		</div>
+	</div>
+
+
+    <svg id="screen" width="760mm" height="300mm" xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>
+        <g id="firstGroup">
+            <svg id="caliperSmallJawVernier" height="82.096mm" width="57.845mm" x="43.000mm" y="5.500mm">
+                <g transform="translate(-31.447 -159.78)">
+                    <path stroke-linejoin="round" d="m111.43 161.28v189.5h-11.813v36.735h135.29v61.657h-185.13s-16.83-33.175-16.83-90.624 17.154-141.24 78.487-197.27z" fill-rule="evenodd" stroke="#000" stroke-width="3" fill="#ccc"/>
+                </g>
+            </svg>
+            <svg id="caliperDepthProbe" height="13.119mm" width="577.86mm" x="172.800mm" y="103.000mm">
+                <g transform="translate(-93.396 -204.57)">
+                    <path d="m95.843 206.07h1978.1v18.767h65.454v24.717h-2044.5z" fill-rule="evenodd" stroke="#000" stroke-width="3" fill="#999"/>
+                </g>
+            </svg>
+        </g>
+        <g id="secondGroup">
+            <svg id="caliperMainBody" height="292.87mm" width="754.66mm">
+                <g fill-rule="evenodd" stroke="#000" stroke-width="3">
+                    <path stroke-linejoin="round" d="m244.66 244.15h-206.17c-9.714 0-10.199 4.86-10.199 10.2v316.69s96.189 358.99 108.85 406.23c12.66 47.23 48.93 79.93 107.19 79.93v-547.65h2455v-198.73h-2318.1l0.04 7.45h-44.67v-105.51c0-125.09-90.97-189.99-91.3-190.32 0 6.096-0.61 208.27-0.61 221.71z" fill="#ccc"/>
+                    <path d="m208.32 920.58c-8.7 0-9.59 3.18-9.59 9.59v119.03c13.28 5.1 28.48 8 45.59 8v-136.62h-36z" fill="#e5e5e5"/>
+                    <path stroke-linejoin="round" d="m245.26 22.452c0 5.512-0.44 158.61-0.53 200.1h33.47v-168.25c-17.8-21.008-32.81-31.717-32.94-31.848z" fill="#e5e5e5"/>
+                </g>
+            </svg>
+            <g id="caliperRullers" x="0.0mm"></g>
+        </g>
+        <g id="thirdGroup">
+            <svg id="caliperMeterVernier" height="163.54079mm" width="214.9054mm" x="64.700mm" y="126.750mm" >
+                <path stroke-linejoin="round" d="m 31.167708,102.27998 0.0436,33.984 -29.7080001,0.19743 v 441.46997 c 0,0 88.7500001,5.4095 118.9200021,-107.18997 30.17,-112.59 70.192,-261.96 76.938,-287.14 6.7454,-25.174 22.87,-35.263 61.077,-35.263 h 394.28 v -46.067 H 31.168308 Z" stroke="#000000" stroke-width="3" fill="none" id="path911" />
+                <path d="m 31.167708,102.27998 0.0436,33.984 -29.7080001,0.19743 v 441.46997 c 0,0 88.7500001,5.4095 118.9200021,-107.18997 30.17,-112.59 70.192,-261.96 76.938,-287.14 6.7454,-25.174 22.87,-35.263 61.077,-35.263 H 759.98539 L 759.76557,103.3274 31.168308,102.27141 Z" fill="#cccccc" id="path913" style="fill-rule:evenodd;stroke:#000000;stroke-width:3" />
+                <path stroke-linejoin="round" d="m 409.59556,103.65998 v 64.424 c 0,4.8061 2.135,6.9917 12.11,6.9917 9.975,0 166.97,6.2822 166.97,6.2822 0,0 49.876,32.127 91.315,31.926 47.145,-0.22886 78.041,-24.488 78.041,-24.488 l 1.9453,-66.598 -350.39,-18.538 z" fill="#b2b2b2" id="path915" style="fill-rule:evenodd;stroke:#000000;stroke-width:3" />
+                <path d="m 1.4977079,441.56998 v 136.38 c -1e-5,-2e-4 21.5280001,1.291 46.9690001,-10.813 0,-29.166 -2e-5,-109.93 0,-115.72 0,-6.8658 -3.5501,-9.8437 -9.8438,-9.8438 -5.5302,0 -30.3130001,1e-5 -37.1250001,0 z" fill="#e5e5e5" id="path917" style="fill-rule:evenodd;stroke:#000000;stroke-width:3" />
+                <rect stroke-linejoin="round" stroke-dashoffset="3.5" height="101.70507" width="728.0235" stroke="#000000" y="1.622465" x="31.730198" stroke-width="1.5" fill="#e5e5e5" id="rect921" />
+                <path stroke-linejoin="round" d="M 31.73829,52.880565 V 103.3274 H 759.76557 V 52.880565 Z" stroke-dashoffset="3.5" stroke="#000000" stroke-width="3.24116" fill="#cdcdcd" id="path923" />
+                <path d="m 443.36506,127.79998 c 0,4.2975 -3.4838,7.7812 -7.7812,7.7812 -4.2975,0 -7.7812,-3.4838 -7.7812,-7.7812 0,-4.2975 3.4838,-7.7812 7.812,-7.7812 4.2975,0 7.7812,3.4838 7.7812,7.7812 z" fill="#808080" id="path925" />
+            </svg>
+            <svg id="caliperInchVernier" height="28.204mm" width="206.55mm" x="96.500mm" y="65.300mm">
+                <g transform="matrix(1.3828271,0,0,0.99465245,889.41963,40.202891)" id="g1040">
+                <g stroke-linejoin="round" transform="translate(-1332,-288.43)" stroke="#000000" stroke-width="3" id="g1038">
+                    <path d="m 690.3,249.51 h 460.27 v 96.935 h -460.1 l -0.16183,-96.935 z" fill-rule="evenodd" fill="#b2b2b2" id="path1034" />
+                    <path d="m 690.39,298.24 0.0625,48.188 h 460.13 V 298.24 h -460.19 z" stroke-dashoffset="3.5" stroke-linecap="round" fill="#e5e5e5" id="path1036" />
+                </g>
+            </g>	   
+            </svg>        
+            <svg id="svgVernier" height="500.0mm" width="500.0mm" x="0.0mm" y="0.0mm">
+                <g id="vernierRullers"></g>
+            </svg>
+        </g>
+	</svg>		
+
+    <div style="max-height:100mm;max-width:100mm;overflow: scroll;">
+        <canvas id="can" xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'></canvas>
+    </div>
+    <input id="canvasScale" type="range" min="0.3" max="1.0" value="1.0" step="0.05" class="slider" onchange="rescaleCanvas(this.value)">
+   
+	<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.5.0/dist/svg-pan-zoom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvg/3.0.10/umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+    <script type="text/javascript">
+        
+
+        //let panZoomTiger = svgPanZoom("#screen", {zoomScaleSensitivity: 1.0, maxZoom: 40});
+
+        let mainGroup = document.getElementById("caliperRullers");
+        let vernierGroup = document.getElementById("vernierRullers");
+
+        let vernierElements = [document.getElementById("caliperSmallJawVernier")];
+        vernierElements.push(document.getElementById("caliperDepthProbe"));
+        vernierElements.push(document.getElementById("caliperMeterVernier"));
+        vernierElements.push(document.getElementById("caliperInchVernier"));
+        vernierElements.push(document.getElementById("svgVernier"));
+
+        let vernierX0 = [];
+        for (elem of vernierElements) vernierX0.push(elem.getAttribute("x"));
+		let position;
+		let vernierDiv;
+        
+        const rullerSizeCM = 18;
+        
+        const bodyTicksNumberMM = rullerSizeCM*10 + 1;
+        
+        const bodyMajorTicksHeigth = "15.0mm";
+        const bodyMediumTicksHeigth = "12.0mm";
+        const bodyMinorTicksHeigth = "10.0mm";
+        const bodyMajorTicksWidth = "0.5mm";        
+        const bodyMediumTicksWidth = "0.2mm";
+        const bodyMinorTicksWidth = "0.2mm";
+        const bodyMinorStep = "3.3";
+        
+        const bodyMajorTicksRange = 10;
+        const bodyMediumTicksRange = 5;
+        const bTx1 = "78.0mm";
+        const bTy1 = "130.0mm";
+
+        const valueGapX = "6.5mm";
+        const valueGapY = "3.0mm";
+		const valueVGapX = "-1.2mm";
+        const valueVGapY = "2.0mm";		
+
+        const verinerSizeMM = 45*parseFloat(bodyMinorStep);
+        const vernierMajorTicksHeigth = "10.0mm";
+        const vernierMinorTicksHeigth = "6.0mm";
+        const vernierTicksWidth = "0.2mm";
+        const vTy1 = "127.0mm";
+        const maxDisplacementCM = 13.5;
+
+        const mTP = 3.7795275591;
+
+        const tempCanvas = document.createElement("canvas");
+        let tctx = tempCanvas.getContext("2d");
+        const canvas = document.getElementById('can');
+        let ctx = canvas.getContext('2d');
+        let cw = document.getElementById('screen').width.baseVal.value;
+        let ch = document.getElementById('screen').height.baseVal.value;        
+        canvas.width = cw;
+        canvas.height = ch;
+        tempCanvas.width = cw;
+        tempCanvas.height = ch;
+        
+        let vCanvg;
+        
+        function diffFloatStringMM(a, b) {
+            return (parseFloat(a)-parseFloat(b)).toString() + "mm";
+        }
+        function sumFloatStringMM(a, b) {
+            return (parseFloat(a)+parseFloat(b)).toString() + "mm";
+        }
+
+        function moveVernier() {
+			let elem = document.getElementById("slider");
+			let step = parseFloat(bodyMinorStep)*0.02;
+            let x = parseInt(elem.value)*step;
+            for (let i = 0; i < vernierX0.length; i++) {
+                vernierElements[i].setAttribute("x", (parseFloat(vernierX0[i]) + x).toString() + 'mm');                
+            }			
+			let res = 1.0/vernierDiv;			
+			let na = 1;
+			if (vernierDiv >= 20) na = 2;
+			position = x/parseFloat(bodyMinorStep);
+			position = res*Math.round(position/res);
+			position = position.toFixed(na);
+			writePosition();
+        }
+
+		function writePosition() {
+			let elem = document.getElementById("position");
+			if (document.getElementById("showValue").checked) {
+				elem.innerHTML = String(position) + " mm";
+			}
+			else elem.innerHTML = "";
+		}
+
+        function updateDivisions(ndiv) {
+            let tick, tickStyle, val, i, x1, y2;            
+            let n = parseInt(ndiv);
+			vernierDiv = n;
+			while (vernierGroup.firstChild) vernierGroup.removeChild(vernierGroup.firstChild);
+            if (n == 5) {          
+				let step  = bodyMinorStep*(10 - 1.0/n);
+                for (i = 0; i < n + 1; i++) {
+                    tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    tickStyle = "stroke:rgb(0,0,0);stroke-width:" + vernierTicksWidth;
+                    x1 = sumFloatStringMM(bTx1, (i*step).toString());
+					y2 = sumFloatStringMM(vTy1, vernierMajorTicksHeigth);
+                    tick.setAttribute("x1", x1);
+                    tick.setAttribute("y1", vTy1);
+                    tick.setAttribute("x2", x1);
+                    tick.setAttribute("y2", y2);
+                    tick.setAttribute("style", tickStyle);
+                    vernierGroup.appendChild(tick);
+					val = document.createElementNS("http://www.w3.org/2000/svg", "text");
+					val.setAttribute("x", diffFloatStringMM(x1, valueVGapX));
+					val.setAttribute("y", sumFloatStringMM(y2, valueVGapY));
+					val.setAttribute("style", "font-size:7.0mm; font-family:arial");
+					val.textContent = (2*i).toString();
+					vernierGroup.appendChild(val);
+                }
+            }
+			if (n == 10) {     
+				let step  = bodyMinorStep*(5 - 1.0/n);
+                for (i = 0; i < n + 1; i++) {
+                    tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    tickStyle = "stroke:rgb(0,0,0);stroke-width:" + vernierTicksWidth;
+                    x1 = sumFloatStringMM(bTx1, (i*step).toString());
+					y2 = sumFloatStringMM(vTy1, vernierMajorTicksHeigth);					
+                    tick.setAttribute("x1", x1);
+                    tick.setAttribute("y1", vTy1);
+                    tick.setAttribute("x2", x1);
+                    tick.setAttribute("y2", y2);
+                    tick.setAttribute("style", tickStyle);
+                    vernierGroup.appendChild(tick);					
+					val = document.createElementNS("http://www.w3.org/2000/svg", "text");
+					val.setAttribute("x", diffFloatStringMM(x1, valueVGapX));
+					val.setAttribute("y", sumFloatStringMM(y2, valueVGapY));
+					val.setAttribute("style", "font-size:7.0mm; font-family:arial");
+					val.textContent = (i).toString();
+					vernierGroup.appendChild(val);
+                }
+            }
+			if (n == 20) {     
+				let step  = bodyMinorStep*(2 - 1.0/n);
+                for (i = 0; i < n + 1; i++) {
+                    tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    tickStyle = "stroke:rgb(0,0,0);stroke-width:" + vernierTicksWidth;
+                    x1 = sumFloatStringMM(bTx1, (i*step).toString());
+					if (i%2 == 0) y2 = sumFloatStringMM(vTy1, vernierMajorTicksHeigth);
+					else y2 = sumFloatStringMM(vTy1, vernierMinorTicksHeigth);
+                    tick.setAttribute("x1", x1);
+                    tick.setAttribute("y1", vTy1);
+                    tick.setAttribute("x2", x1);
+                    tick.setAttribute("y2", y2);
+                    tick.setAttribute("style", tickStyle);
+                    vernierGroup.appendChild(tick);
+					if (i%2 == 0) {
+						val = document.createElementNS("http://www.w3.org/2000/svg", "text");
+						val.setAttribute("x", diffFloatStringMM(x1, valueVGapX));
+						val.setAttribute("y", sumFloatStringMM(y2, valueVGapY));
+						val.setAttribute("style", "font-size:7.0mm; font-family:arial");
+						val.textContent = (i/2).toString();
+						vernierGroup.appendChild(val);
+					}
+                }
+            }
+			if (n == 50) {     
+				let step  = bodyMinorStep*(1 - 1.0/n);
+                for (i = 0; i < n + 1; i++) {
+                    tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    tickStyle = "stroke:rgb(0,0,0);stroke-width:" + vernierTicksWidth;
+                    x1 = sumFloatStringMM(bTx1, (i*step).toString());
+					if (i%5 == 0) y2 = sumFloatStringMM(vTy1, vernierMajorTicksHeigth);
+					else y2 = sumFloatStringMM(vTy1, vernierMinorTicksHeigth);
+                    tick.setAttribute("x1", x1);
+                    tick.setAttribute("y1", vTy1);
+                    tick.setAttribute("x2", x1);
+                    tick.setAttribute("y2", y2);
+                    tick.setAttribute("style", tickStyle);
+                    vernierGroup.appendChild(tick);
+					if (i%5 == 0) {
+						val = document.createElementNS("http://www.w3.org/2000/svg", "text");
+						val.setAttribute("x", diffFloatStringMM(x1, valueVGapX));
+						val.setAttribute("y", sumFloatStringMM(y2, valueVGapY));
+						val.setAttribute("style", "font-size:7.0mm; font-family:arial");
+						val.textContent = (i/5).toString();
+						vernierGroup.appendChild(val);
+					}
+                }
+            }
+			moveVernier();
+			writePosition();
+        }
+        
+        function caliperMount () {
+			let tick, val, x1, y2, tickStyle;
+			for (let i = 0; i < bodyTicksNumberMM; i++) {
+				tick = document.createElementNS("http://www.w3.org/2000/svg", "line");            
+				x1 = sumFloatStringMM(bTx1, (i*parseFloat(bodyMinorStep)).toString());
+				if (i % bodyMajorTicksRange == 0) {
+					y2 = diffFloatStringMM(bTy1, bodyMajorTicksHeigth);
+					tickStyle = "stroke:rgb(0,0,0);stroke-width:" + bodyMajorTicksWidth;                
+					val = document.createElementNS("http://www.w3.org/2000/svg", "text");
+					val.setAttribute("x", diffFloatStringMM(x1, valueGapX));
+					val.setAttribute("y", sumFloatStringMM(y2, valueGapY));
+					val.setAttribute("style", "font-size:9.0mm; letter-spacing:3.0mm; font-family:arial");
+					val.textContent = (i/10).toString();
+					mainGroup.appendChild(val);
+				}
+				else if (i % bodyMediumTicksRange == 0) {
+					y2 = diffFloatStringMM(bTy1, bodyMediumTicksHeigth);
+					tickStyle = "stroke:rgb(0,0,0);stroke-width:" + bodyMediumTicksWidth;    
+				}
+				else {
+					y2 = diffFloatStringMM(bTy1, bodyMinorTicksHeigth);
+					tickStyle = "stroke:rgb(0,0,0);stroke-width:" + bodyMinorTicksWidth;
+				}
+				tick.setAttribute("x1", x1);
+				tick.setAttribute("x2", x1);
+				tick.setAttribute("y1", bTy1);
+				tick.setAttribute("y2", y2);            
+				tick.setAttribute("style", tickStyle);
+
+				mainGroup.appendChild(tick);
+			}
+		}
+        position = 0.0;
+		caliperMount();
+        updateDivisions("5");
+        genTempCanvas();
+        
+        
+        function genCanvas () {            
+
+            //const canvas = document.getElementById('can');
+            ctx = canvas.getContext('2d');
+            let screenContent = document.getElementById('screen').outerHTML;            
+            vCanvg = canvg.Canvg.fromString(tctx, screenContent);
+            
+            vCanvg.render();
+            //document.getElementById('screen').innerHTML = '';
+        }
+
+        function generateXML () {            
+            let screenContent = document.getElementById('screen').outerHTML;
+            var blob = new Blob([screenContent], {type: "text/plain;charset=utf-8"});
+            saveAs(blob, "svgContent.txt");
+        }
+        
+        function genTempCanvas () {            
+            tctx.drawImage(canvas, 0, 0);
+        }
+
+        function rescaleCanvas (value) {  
+            ctx = canvas.getContext('2d');                          
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, cw, ch);
+            /* console.log(tempCanvas.width);
+            console.log(cw);
+            tempCanvas.width = cw;
+            tempCanvas.height = ch;                         */
+            canvas.width = cw*value;
+            canvas.height = ch*value;          
+            ctx.drawImage(tempCanvas,0,0,cw,ch,0,0,cw*value,ch*value);              
+        }
+
+    </script>
+
+</body>
+
+</html>
