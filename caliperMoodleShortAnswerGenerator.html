@@ -1,20 +1,10 @@
 <html>
 
 <head>
-    <style type="text/css">
-        body {
-			padding: 2%;
-            display: grid;
-            grid-template-rows: 2fr 1fr 3fr;
-            grid-template-columns: 1fr;
-        }
-        #screen {
-            background-color:papayawhip;
-        }
-    </style>    
+    <title>Caliper Moodle Short Answer Generator</title>
 </head>
 
-<body>
+<body id="body">
 	<div>
 	<h1><center>Moodle short answers question generator for Caliper</center></h1>		
     <div>
@@ -33,13 +23,13 @@ To pan the caliper as a whole, keep the left mouse button pressed while panning 
     <div id="caliperTypes">
         <span>Types of calipers to be included in the questions:</span>			
         <div>           				
-            <input type="checkbox" name="calip5" value="5" onchange="updateDivisions(this.value)" checked>
+            <input type="checkbox" id="t5" name="calipType" value="5" onchange="updateCalipType()" checked>
             <label for="5"> 5 divisions of the Vernier</label><br>
-            <input type="checkbox" name="calip10" value="10" onchange="updateDivisions(this.value)" checked>
+            <input type="checkbox" id="t10" name="calipType" value="10" onchange="updateCalipType()" checked>
             <label for="10"> 10 divisions of the Vernier</label><br>
-            <input type="checkbox" name="calip20" value="20" onchange="updateDivisions(this.value)" checked>
+            <input type="checkbox" id="t20" name="calipType" value="20" onchange="updateCalipType()" checked>
             <label for="20"> 20 divisions of the Vernier</label><br>            
-            <input type="checkbox" name="calip50" value="50" onchange="updateDivisions(this.value)" checked>
+            <input type="checkbox" id="t50" name="calipType" value="50" onchange="updateCalipType()" checked>
             <label for="50"> 50 divisions of the Vernier</label>         
         </div>
     </div>
@@ -63,7 +53,7 @@ To pan the caliper as a whole, keep the left mouse button pressed while panning 
     </div>
 	
     <button onclick="generateXML()">Generate Moodle XML</button>
-    <button onclick="genCanvas()">Generate Canvas</button>    
+    <button onclick="genCanvas()">Generate canvas</button>    
 
 	<div style="display: grid; grid-template-columns: 1fr 1fr;">
 		<div>
@@ -88,65 +78,65 @@ To pan the caliper as a whole, keep the left mouse button pressed while panning 
 	</div>
 
 
-    <svg id="screen" width="760mm" height="300mm" xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>
-        <g id="firstGroup">
-            <svg id="caliperSmallJawVernier" height="82.096mm" width="57.845mm" x="43.000mm" y="5.500mm">
-                <g transform="translate(-31.447 -159.78)">
-                    <path stroke-linejoin="round" d="m111.43 161.28v189.5h-11.813v36.735h135.29v61.657h-185.13s-16.83-33.175-16.83-90.624 17.154-141.24 78.487-197.27z" fill-rule="evenodd" stroke="#000" stroke-width="3" fill="#ccc"/>
-                </g>
-            </svg>
-            <svg id="caliperDepthProbe" height="13.119mm" width="577.86mm" x="172.800mm" y="103.000mm">
-                <g transform="translate(-93.396 -204.57)">
-                    <path d="m95.843 206.07h1978.1v18.767h65.454v24.717h-2044.5z" fill-rule="evenodd" stroke="#000" stroke-width="3" fill="#999"/>
-                </g>
-            </svg>
-        </g>
-        <g id="secondGroup">
-            <svg id="caliperMainBody" height="292.87mm" width="754.66mm">
-                <g fill-rule="evenodd" stroke="#000" stroke-width="3">
-                    <path stroke-linejoin="round" d="m244.66 244.15h-206.17c-9.714 0-10.199 4.86-10.199 10.2v316.69s96.189 358.99 108.85 406.23c12.66 47.23 48.93 79.93 107.19 79.93v-547.65h2455v-198.73h-2318.1l0.04 7.45h-44.67v-105.51c0-125.09-90.97-189.99-91.3-190.32 0 6.096-0.61 208.27-0.61 221.71z" fill="#ccc"/>
-                    <path d="m208.32 920.58c-8.7 0-9.59 3.18-9.59 9.59v119.03c13.28 5.1 28.48 8 45.59 8v-136.62h-36z" fill="#e5e5e5"/>
-                    <path stroke-linejoin="round" d="m245.26 22.452c0 5.512-0.44 158.61-0.53 200.1h33.47v-168.25c-17.8-21.008-32.81-31.717-32.94-31.848z" fill="#e5e5e5"/>
-                </g>
-            </svg>
-            <g id="caliperRullers" x="0.0mm"></g>
-        </g>
-        <g id="thirdGroup">
-            <svg id="caliperMeterVernier" height="163.54079mm" width="214.9054mm" x="64.700mm" y="126.750mm" >
-                <path stroke-linejoin="round" d="m 31.167708,102.27998 0.0436,33.984 -29.7080001,0.19743 v 441.46997 c 0,0 88.7500001,5.4095 118.9200021,-107.18997 30.17,-112.59 70.192,-261.96 76.938,-287.14 6.7454,-25.174 22.87,-35.263 61.077,-35.263 h 394.28 v -46.067 H 31.168308 Z" stroke="#000000" stroke-width="3" fill="none" id="path911" />
-                <path d="m 31.167708,102.27998 0.0436,33.984 -29.7080001,0.19743 v 441.46997 c 0,0 88.7500001,5.4095 118.9200021,-107.18997 30.17,-112.59 70.192,-261.96 76.938,-287.14 6.7454,-25.174 22.87,-35.263 61.077,-35.263 H 759.98539 L 759.76557,103.3274 31.168308,102.27141 Z" fill="#cccccc" id="path913" style="fill-rule:evenodd;stroke:#000000;stroke-width:3" />
-                <path stroke-linejoin="round" d="m 409.59556,103.65998 v 64.424 c 0,4.8061 2.135,6.9917 12.11,6.9917 9.975,0 166.97,6.2822 166.97,6.2822 0,0 49.876,32.127 91.315,31.926 47.145,-0.22886 78.041,-24.488 78.041,-24.488 l 1.9453,-66.598 -350.39,-18.538 z" fill="#b2b2b2" id="path915" style="fill-rule:evenodd;stroke:#000000;stroke-width:3" />
-                <path d="m 1.4977079,441.56998 v 136.38 c -1e-5,-2e-4 21.5280001,1.291 46.9690001,-10.813 0,-29.166 -2e-5,-109.93 0,-115.72 0,-6.8658 -3.5501,-9.8437 -9.8438,-9.8438 -5.5302,0 -30.3130001,1e-5 -37.1250001,0 z" fill="#e5e5e5" id="path917" style="fill-rule:evenodd;stroke:#000000;stroke-width:3" />
-                <rect stroke-linejoin="round" stroke-dashoffset="3.5" height="101.70507" width="728.0235" stroke="#000000" y="1.622465" x="31.730198" stroke-width="1.5" fill="#e5e5e5" id="rect921" />
-                <path stroke-linejoin="round" d="M 31.73829,52.880565 V 103.3274 H 759.76557 V 52.880565 Z" stroke-dashoffset="3.5" stroke="#000000" stroke-width="3.24116" fill="#cdcdcd" id="path923" />
-                <path d="m 443.36506,127.79998 c 0,4.2975 -3.4838,7.7812 -7.7812,7.7812 -4.2975,0 -7.7812,-3.4838 -7.7812,-7.7812 0,-4.2975 3.4838,-7.7812 7.812,-7.7812 4.2975,0 7.7812,3.4838 7.7812,7.7812 z" fill="#808080" id="path925" />
-            </svg>
-            <svg id="caliperInchVernier" height="28.204mm" width="206.55mm" x="96.500mm" y="65.300mm">
-                <g transform="matrix(1.3828271,0,0,0.99465245,889.41963,40.202891)" id="g1040">
-                <g stroke-linejoin="round" transform="translate(-1332,-288.43)" stroke="#000000" stroke-width="3" id="g1038">
-                    <path d="m 690.3,249.51 h 460.27 v 96.935 h -460.1 l -0.16183,-96.935 z" fill-rule="evenodd" fill="#b2b2b2" id="path1034" />
-                    <path d="m 690.39,298.24 0.0625,48.188 h 460.13 V 298.24 h -460.19 z" stroke-dashoffset="3.5" stroke-linecap="round" fill="#e5e5e5" id="path1036" />
-                </g>
-            </g>	   
-            </svg>        
-            <svg id="svgVernier" height="500.0mm" width="500.0mm" x="0.0mm" y="0.0mm">
-                <g id="vernierRullers"></g>
-            </svg>
-        </g>
-	</svg>		
+    <div id="screenDiv" style="display:none;">
+        <svg id="screen" width="760mm" height="300mm" xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>
+            <g id="firstGroup">
+                <svg id="caliperSmallJawVernier" height="82.096mm" width="57.845mm" x="43.000mm" y="5.500mm">
+                    <g transform="translate(-31.447 -159.78)">
+                        <path stroke-linejoin="round" d="m111.43 161.28v189.5h-11.813v36.735h135.29v61.657h-185.13s-16.83-33.175-16.83-90.624 17.154-141.24 78.487-197.27z" fill-rule="evenodd" stroke="#000" stroke-width="3" fill="#ccc"/>
+                    </g>
+                </svg>
+                <svg id="caliperDepthProbe" height="13.119mm" width="577.86mm" x="172.800mm" y="103.000mm">
+                    <g transform="translate(-93.396 -204.57)">
+                        <path d="m95.843 206.07h1978.1v18.767h65.454v24.717h-2044.5z" fill-rule="evenodd" stroke="#000" stroke-width="3" fill="#999"/>
+                    </g>
+                </svg>
+            </g>
+            <g id="secondGroup">
+                <svg id="caliperMainBody" height="292.87mm" width="754.66mm">
+                    <g fill-rule="evenodd" stroke="#000" stroke-width="3">
+                        <path stroke-linejoin="round" d="m244.66 244.15h-206.17c-9.714 0-10.199 4.86-10.199 10.2v316.69s96.189 358.99 108.85 406.23c12.66 47.23 48.93 79.93 107.19 79.93v-547.65h2455v-198.73h-2318.1l0.04 7.45h-44.67v-105.51c0-125.09-90.97-189.99-91.3-190.32 0 6.096-0.61 208.27-0.61 221.71z" fill="#ccc"/>
+                        <path d="m208.32 920.58c-8.7 0-9.59 3.18-9.59 9.59v119.03c13.28 5.1 28.48 8 45.59 8v-136.62h-36z" fill="#e5e5e5"/>
+                        <path stroke-linejoin="round" d="m245.26 22.452c0 5.512-0.44 158.61-0.53 200.1h33.47v-168.25c-17.8-21.008-32.81-31.717-32.94-31.848z" fill="#e5e5e5"/>
+                    </g>
+                </svg>
+                <g id="caliperRullers" x="0.0mm"></g>
+            </g>
+            <g id="thirdGroup">
+                <svg id="caliperMeterVernier" height="163.54079mm" width="214.9054mm" x="64.700mm" y="126.750mm" >
+                    <path stroke-linejoin="round" d="m 31.167708,102.27998 0.0436,33.984 -29.7080001,0.19743 v 441.46997 c 0,0 88.7500001,5.4095 118.9200021,-107.18997 30.17,-112.59 70.192,-261.96 76.938,-287.14 6.7454,-25.174 22.87,-35.263 61.077,-35.263 h 394.28 v -46.067 H 31.168308 Z" stroke="#000000" stroke-width="3" fill="none" id="path911" />
+                    <path d="m 31.167708,102.27998 0.0436,33.984 -29.7080001,0.19743 v 441.46997 c 0,0 88.7500001,5.4095 118.9200021,-107.18997 30.17,-112.59 70.192,-261.96 76.938,-287.14 6.7454,-25.174 22.87,-35.263 61.077,-35.263 H 759.98539 L 759.76557,103.3274 31.168308,102.27141 Z" fill="#cccccc" id="path913" style="fill-rule:evenodd;stroke:#000000;stroke-width:3" />
+                    <path stroke-linejoin="round" d="m 409.59556,103.65998 v 64.424 c 0,4.8061 2.135,6.9917 12.11,6.9917 9.975,0 166.97,6.2822 166.97,6.2822 0,0 49.876,32.127 91.315,31.926 47.145,-0.22886 78.041,-24.488 78.041,-24.488 l 1.9453,-66.598 -350.39,-18.538 z" fill="#b2b2b2" id="path915" style="fill-rule:evenodd;stroke:#000000;stroke-width:3" />
+                    <path d="m 1.4977079,441.56998 v 136.38 c -1e-5,-2e-4 21.5280001,1.291 46.9690001,-10.813 0,-29.166 -2e-5,-109.93 0,-115.72 0,-6.8658 -3.5501,-9.8437 -9.8438,-9.8438 -5.5302,0 -30.3130001,1e-5 -37.1250001,0 z" fill="#e5e5e5" id="path917" style="fill-rule:evenodd;stroke:#000000;stroke-width:3" />
+                    <rect stroke-linejoin="round" stroke-dashoffset="3.5" height="101.70507" width="728.0235" stroke="#000000" y="1.622465" x="31.730198" stroke-width="1.5" fill="#e5e5e5" id="rect921" />
+                    <path stroke-linejoin="round" d="M 31.73829,52.880565 V 103.3274 H 759.76557 V 52.880565 Z" stroke-dashoffset="3.5" stroke="#000000" stroke-width="3.24116" fill="#cdcdcd" id="path923" />
+                    <path d="m 443.36506,127.79998 c 0,4.2975 -3.4838,7.7812 -7.7812,7.7812 -4.2975,0 -7.7812,-3.4838 -7.7812,-7.7812 0,-4.2975 3.4838,-7.7812 7.812,-7.7812 4.2975,0 7.7812,3.4838 7.7812,7.7812 z" fill="#808080" id="path925" />
+                </svg>
+                <svg id="caliperInchVernier" height="28.204mm" width="206.55mm" x="96.500mm" y="65.300mm">
+                    <g transform="matrix(1.3828271,0,0,0.99465245,889.41963,40.202891)" id="g1040">
+                    <g stroke-linejoin="round" transform="translate(-1332,-288.43)" stroke="#000000" stroke-width="3" id="g1038">
+                        <path d="m 690.3,249.51 h 460.27 v 96.935 h -460.1 l -0.16183,-96.935 z" fill-rule="evenodd" fill="#b2b2b2" id="path1034" />
+                        <path d="m 690.39,298.24 0.0625,48.188 h 460.13 V 298.24 h -460.19 z" stroke-dashoffset="3.5" stroke-linecap="round" fill="#e5e5e5" id="path1036" />
+                    </g>
+                </g>	   
+                </svg>        
+                <svg id="svgVernier" height="500.0mm" width="500.0mm" x="0.0mm" y="0.0mm">
+                    <g id="vernierRullers"></g>
+                </svg>
+            </g>
+        </svg>		
+    </div>
 
-    <div style="max-height:100mm;max-width:100mm;overflow: scroll;">
+    <div style="max-height:300;overflow:scroll;">
         <canvas id="can" xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'></canvas>
     </div>
-    <input id="canvasScale" type="range" min="0.3" max="1.0" value="1.0" step="0.05" class="slider" onchange="rescaleCanvas(this.value)">
+    <label for="canvasScale">Zoom: </label><input id="canvasScale" type="range" min="0.3" max="1.0" value="1.0" step="0.05" class="slider" onchange="rescaleCanvas(this.value)">
    
 	<script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.5.0/dist/svg-pan-zoom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvg/3.0.10/umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
-    <script type="text/javascript">
-        
-
-        //let panZoomTiger = svgPanZoom("#screen", {zoomScaleSensitivity: 1.0, maxZoom: 40});
+    
+    <script type="text/javascript" id="caliperGenerator">
 
         let mainGroup = document.getElementById("caliperRullers");
         let vernierGroup = document.getElementById("vernierRullers");
@@ -191,20 +181,21 @@ To pan the caliper as a whole, keep the left mouse button pressed while panning 
         const vTy1 = "127.0mm";
         const maxDisplacementCM = 13.5;
 
-        const mTP = 3.7795275591;
+        const $screen = document.getElementById('screen');
+        const $tempCanvas = document.createElement("canvas");
+        const $canvas = document.getElementById('can');
 
-        const tempCanvas = document.createElement("canvas");
-        let tctx = tempCanvas.getContext("2d");
-        const canvas = document.getElementById('can');
-        let ctx = canvas.getContext('2d');
-        let cw = document.getElementById('screen').width.baseVal.value;
-        let ch = document.getElementById('screen').height.baseVal.value;        
-        canvas.width = cw;
-        canvas.height = ch;
-        tempCanvas.width = cw;
-        tempCanvas.height = ch;
-        
-        let vCanvg;
+        let calipTypesChecked = [];
+
+        let tctx = $tempCanvas.getContext("2d");        
+        let ctx = $canvas.getContext('2d');
+        let cw = $screen.width.baseVal.value;
+        let ch = $screen.height.baseVal.value;        
+        $canvas.width = cw;
+        $canvas.height = ch;
+        $tempCanvas.width = cw;
+        $tempCanvas.height = ch;
+               
         
         function diffFloatStringMM(a, b) {
             return (parseFloat(a)-parseFloat(b)).toString() + "mm";
@@ -214,9 +205,9 @@ To pan the caliper as a whole, keep the left mouse button pressed while panning 
         }
 
         function moveVernier() {
-			let elem = document.getElementById("slider");
+			let val = Math.round(Math.random()*5400);                        
 			let step = parseFloat(bodyMinorStep)*0.02;
-            let x = parseInt(elem.value)*step;
+            let x = parseInt(val)*step;
             for (let i = 0; i < vernierX0.length; i++) {
                 vernierElements[i].setAttribute("x", (parseFloat(vernierX0[i]) + x).toString() + 'mm');                
             }			
@@ -237,9 +228,10 @@ To pan the caliper as a whole, keep the left mouse button pressed while panning 
 			else elem.innerHTML = "";
 		}
 
-        function updateDivisions(ndiv) {
+        function updateDivisions() {
             let tick, tickStyle, val, i, x1, y2;            
-            let n = parseInt(ndiv);
+            let ndiv = calipTypesChecked[Math.round(Math.random()*(calipTypesChecked.length-1))];            
+            let n = parseInt(ndiv.value);
 			vernierDiv = n;
 			while (vernierGroup.firstChild) vernierGroup.removeChild(vernierGroup.firstChild);
             if (n == 5) {          
@@ -335,7 +327,18 @@ To pan the caliper as a whole, keep the left mouse button pressed while panning 
 			moveVernier();
 			writePosition();
         }
+     
+        function updateCalipType() {            
+            let types = document.getElementsByName('calipType');
+            calipTypesChecked = [];
+            for (let typeCheckElem of types) {                
+                if (typeCheckElem.checked) calipTypesChecked.push(typeCheckElem);
+                typeCheckElem.disabled = false;
+            }
+            if (calipTypesChecked.length == 1) calipTypesChecked[0].disabled = true;
+        }
         
+
         function caliperMount () {
 			let tick, val, x1, y2, tickStyle;
 			for (let i = 0; i < bodyTicksNumberMM; i++) {
@@ -368,45 +371,50 @@ To pan the caliper as a whole, keep the left mouse button pressed while panning 
 				mainGroup.appendChild(tick);
 			}
 		}
+        
         position = 0.0;
 		caliperMount();
-        updateDivisions("5");
-        genTempCanvas();
+        updateCalipType();
+        updateDivisions();
+        moveVernier();
+        drawAtTempCanvas();
         
         
         function genCanvas () {            
 
-            //const canvas = document.getElementById('can');
-            ctx = canvas.getContext('2d');
-            let screenContent = document.getElementById('screen').outerHTML;            
-            vCanvg = canvg.Canvg.fromString(tctx, screenContent);
+            //const $canvas = document.getElementById('can');
+            ctx = $canvas.getContext('2d');
+            let screenContent = $screen.outerHTML;            
+            let vCanvg = canvg.Canvg.fromString(tctx, screenContent);
             
             vCanvg.render();
-            //document.getElementById('screen').innerHTML = '';
+            //$screen.innerHTML = '';
         }
 
         function generateXML () {            
-            let screenContent = document.getElementById('screen').outerHTML;
+            let screenContent = $screen.outerHTML;
             var blob = new Blob([screenContent], {type: "text/plain;charset=utf-8"});
             saveAs(blob, "svgContent.txt");
         }
         
-        function genTempCanvas () {            
-            tctx.drawImage(canvas, 0, 0);
+        function drawAtTempCanvas () {            
+            tctx.drawImage($canvas, 0, 0);
         }
 
         function rescaleCanvas (value) {  
-            ctx = canvas.getContext('2d');                          
+            ctx = $canvas.getContext('2d');                          
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, cw, ch);
-            /* console.log(tempCanvas.width);
-            console.log(cw);
-            tempCanvas.width = cw;
-            tempCanvas.height = ch;                         */
-            canvas.width = cw*value;
-            canvas.height = ch*value;          
-            ctx.drawImage(tempCanvas,0,0,cw,ch,0,0,cw*value,ch*value);              
+            ctx.fillRect(0, 0, cw, ch);            
+            $canvas.width = cw*value;
+            $canvas.height = ch*value;          
+            ctx.drawImage($tempCanvas,0,0,cw,ch,0,0,cw*value,ch*value);              
         }
+
+        
+
+    </script>
+
+    <script>
 
     </script>
 
