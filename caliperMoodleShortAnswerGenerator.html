@@ -2,55 +2,81 @@
 
 <head>
     <title>Caliper Moodle Short Answer Generator</title>
+    <style>
+        .framed {
+            background-color: rgb(220, 220, 220);
+            border-style: groove;
+            padding: 7px;
+            margin: 10px 5px;
+        }
+        button {
+            background-color: khaki;
+            padding: 10px;
+            margin: 10px 5px;
+            border-width: 2px;
+            border-radius: 7px;
+            font-size: large;
+        }
+    </style>
 </head>
 
 <body id="body">
 	<div>
 	<h1><center>Moodle short answers question generator for Caliper</center></h1>		
-    <div>
+    <div class="framed">
         <label for="questionText"><b>Question text:</b></label><br>
-        <textarea id="questionText" rows="6" cols="100">
+        <textarea id="questionText" rows="6" style="width:100%;background-color:azure;">
 <p>Enter the caliper reading in millimeters with the correct number of decimal places.</p>
-<p>To zoom in, use the slider below the caliper image. To pan the image, use the horizontal and vertical sliders.</p>
+<p>To zoom in, use the slider below the caliper image. To pan the caliper, use the horizontal and vertical sliders inside the image box.</p>
         </textarea>
-    </div><br>
-    <div id="caliperTypes">
-        <span><b>Types of calipers to be included in the questions:</b></span>			
-        <div>           				
-            <input type="checkbox" id="t5" name="calipType" value="5" onchange="updateCalipType()" checked>
-            <label for="5"> 5 divisions of the Vernier</label><br>
-            <input type="checkbox" id="t10" name="calipType" value="10" onchange="updateCalipType()" checked>
-            <label for="10"> 10 divisions of the Vernier</label><br>
-            <input type="checkbox" id="t20" name="calipType" value="20" onchange="updateCalipType()" checked>
-            <label for="20"> 20 divisions of the Vernier</label><br>            
-            <input type="checkbox" id="t50" name="calipType" value="50" onchange="updateCalipType()" checked>
-            <label for="50"> 50 divisions of the Vernier</label>         
-        </div>
-    </div><br>
-    <div>
+    </div>
+    <div id="caliperTypes" class="framed">
+        <span><b>Types of caliper to be included in the questions:</b></span>			
+        <ul>
+            <li>
+                <input type="checkbox" id="t5" name="calipType" value="5" onchange="updateCalipType()" checked>
+                <label for="5"> 5 divisions of the Vernier</label>
+            </li>
+            <li>
+                <input type="checkbox" id="t10" name="calipType" value="10" onchange="updateCalipType()" checked>
+                <label for="10"> 10 divisions of the Vernier</label>    
+            </li>
+            <li>
+                <input type="checkbox" id="t20" name="calipType" value="20" onchange="updateCalipType()" checked>
+                <label for="20"> 20 divisions of the Vernier</label>
+            </li>
+            <li>
+                <input type="checkbox" id="t50" name="calipType" value="50" onchange="updateCalipType()" checked>
+                <label for="50"> 50 divisions of the Vernier</label>         
+            </li>
+        </ul>        
+    </div>
+    <div class="framed">
         <label for="numberQuestions"><b>Number of random questions (1 - 1000):</b> </label>
-        <input type="number" id="numberQuestions" min="1" max="1000" step="1" value="100" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
-    </div><br>
+        <input type="number" id="numberQuestions" min="1" max="1000" step="1" value="100" oninput="this.value=this.value.replace(/[^0-9]/g,'');" onchange="this.value=Math.max(this.min, Math.min(this.value, this.max));">
+    </div>
 
-    <div id="decimalSeparator">
+    <div id="decimalSeparator" class="framed">
         <span><b>Decimal separators accepted:</b></span>			
-        <div>           				
-            <input type="checkbox" name="decimal" value="dot" onchange="updateDecimal()" checked>
-            <label for="dot"> dot</label><br>
-            <input type="checkbox" name="decimal" value="comma" onchange="updateDecimal()" checked>
-            <label for="comma"> comma</label>
-        </div>
-    </div><br>
-    <div>
+        <ul>
+            <li>
+                <input type="checkbox" name="decimal" value="dot" onchange="updateDecimal()" checked>
+                <label for="dot"> dot</label>
+            </li>
+            <li>
+                <input type="checkbox" name="decimal" value="comma" onchange="updateDecimal()" checked>
+                <label for="comma"> comma</label>
+            </li>
+        </ul>        
+    </div>
+    <div class="framed">
         <label for="penalty"><b>Penalty for each wrong attempt (0.0 - 1.0):</b> </label>
-        <input type="number" id="penalty" min="0" max="1.0" value="1.0">
+        <input type="number" id="penalty" min="0" max="1.0" value="1.0" onchange="this.value=Math.max(this.min, Math.min(this.value, this.max));">
     </div>
 	
-    <br>
-    <button onclick="generateXML()"><strong>Generate Moodle XML file</strong></button>
-    <br><br>
+    <button onclick="generateXML()"><strong>Generate Moodle XML file</strong></button>    
     <button onclick="generateSample()">Render new sample</button>
-    <p>Reading: <span id="reading"></span> mm</p>    
+    <span>Reading: <span id="reading"></span> mm</span>
 
     <div id="outputDiv">
         <div id="screenDiv" style="display:none;">
@@ -101,7 +127,7 @@
                 </g>
             </svg>		
         </div>        
-        <div style="max-height:300px;overflow:scroll;border-style:solid;background-color:papayawhip;">
+        <div style="max-height:400px;overflow:scroll;border-style:solid;background-color:papayawhip;">
             <canvas id="can" xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'></canvas>
         </div>
         <label for="canvasScale">Zoom: </label><input id="canvasScale" type="range" min="0.3" max="1.0" value="0.3" step="0.05" class="slider" onchange="rescaleCanvas(this.value)">
@@ -191,7 +217,7 @@
 
         function updateDivisions() {
             let tick, tickStyle, val, i, x1, y2;            
-            let ndiv = calipTypesChecked[Math.round(Math.random()*(calipTypesChecked.length-1))];            
+            let ndiv = calipTypesChecked[Math.floor(Math.random()*calipTypesChecked.length)];            
             let n = parseInt(ndiv.value);
 			vernierDiv = n;
 			while (vernierGroup.firstChild) vernierGroup.removeChild(vernierGroup.firstChild);
@@ -430,7 +456,7 @@
             xmlText += '\n\n</quiz>';
 
             let blob = new Blob([xmlText], {type: "text/plain;charset=utf-8"});
-            saveAs(blob, "output.xml");            
+            saveAs(blob, "caliper_moodle.xml");            
         }
 
         function generateSample() {                        
