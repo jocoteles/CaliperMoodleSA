@@ -133,7 +133,7 @@
         <label for="canvasScale">Zoom: </label><input id="canvasScale" type="range" min="0.3" max="1.0" value="0.3" step="0.05" class="slider" onchange="rescaleCanvas(this.value)">
     </div>
    	
-    <script id="canvgScript" src="https://cdnjs.cloudflare.com/ajax/libs/canvg/3.0.10/umd.js" defer></script>
+    <script id="canvgScript" src="https://cdnjs.cloudflare.com/ajax/libs/canvg/3.0.10/umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
     
     <script type="text/javascript" id="caliperGenerator">
@@ -378,7 +378,7 @@
 
     </script>
 
-    <script id="zoomScript">
+    <script id="zoomScript" defer>
         let $tempCanvas = document.createElement('canvas');
         let $realCanvas = document.getElementById('can');
 
