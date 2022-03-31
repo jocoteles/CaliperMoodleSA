@@ -25,7 +25,7 @@
 	<h1><center>Moodle short answers question generator for Caliper</center></h1>		
     <div class="framed">
         <label for="questionText"><b>Question text:</b></label><br>
-        <textarea id="questionText" rows="6" style="width:100%;background-color:azure;">
+        <textarea id="questionText" rows="6" style="resize:none;width:100%;background-color:azure;">
 <p>Enter the caliper reading in millimeters with the correct number of decimal places.</p>
 <p>To zoom in, use the slider below the caliper image. To pan the caliper, use the horizontal and vertical sliders inside the image box.</p>
         </textarea>
@@ -75,7 +75,7 @@
     </div>
 	
     <button onclick="generateXML()"><strong>Generate Moodle XML file</strong></button>    
-    <button onclick="generateSample()">Render new sample</button>
+    <button onclick="generateSample()">Render a new sample</button>
     <span>Reading: <span id="reading"></span> mm</span>
 
     <div id="outputDiv">
