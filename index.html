@@ -96,7 +96,7 @@ limitations under the License.
     <span>Reading: <span id="reading"></span> mm</span>
 
     <div id="outputDiv">
-        <div id="screenDiv" style="display:none;">
+        <div id="screenDiv" style="max-height:400px;overflow:scroll;border-style:solid;background-color:papayawhip;">
             <svg id="screen" width="760mm" height="300mm" xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>
                 <g id="firstGroup">
                     <svg id="caliperSmallJawVernier" height="82.096mm" width="57.845mm" x="43.000mm" y="5.500mm">
@@ -143,17 +143,69 @@ limitations under the License.
                     </svg>
                 </g>
             </svg>		
-        </div>        
-        <div style="max-height:400px;overflow:scroll;border-style:solid;background-color:papayawhip;">
-            <canvas id="can" xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'></canvas>
-        </div>
-        <label for="canvasScale">Zoom: </label><input id="canvasScale" type="range" min="0.3" max="1.0" value="0.3" step="0.05" class="slider" onchange="rescaleCanvas(this.value)">
+        </div>                        
     </div>
    	
-    <script id="canvgScript" src="https://cdnjs.cloudflare.com/ajax/libs/canvg/3.0.10/umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.5.0/dist/svg-pan-zoom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
     
     <script type="text/javascript" id="caliperGenerator">
+
+var svgActive = false, svgHovered = false
+
+// Expose to window namespace for testing purposes
+let panZoom = svgPanZoom('#screen', {
+    zoomScaleSensitivity: 0.3,
+    maxZoom: 40,
+    zoomEnabled: true,
+    controlIconsEnabled: true,
+    omEnabled: false,
+    fit: 1,
+    center: 1,
+    customEventsHandler: {
+        init: function(options){
+            function updateSvgClassName(){
+                options.svgElement.setAttribute('class', '' + (svgActive ? 'active':'') + (svgHovered ? ' hovered':''))
+            }
+
+            this.listeners = {
+                click: function(){
+                    if (svgActive) {
+                        options.instance.disableZoom()
+                        svgActive = false
+                    } else {
+                        options.instance.enableZoom()
+                        svgActive = true
+                    }
+
+                    updateSvgClassName()
+                },
+                mouseenter: function(){
+                    svgHovered = true
+                    updateSvgClassName()
+                },
+                mouseleave: function(){
+                    svgActive = false
+                    svgHovered = false
+                    options.instance.disableZoom()
+
+                    updateSvgClassName()
+                }
+            }
+
+            this.listeners.mousemove = this.listeners.mouseenter
+
+            for (var eventName in this.listeners){
+                options.svgElement.addEventListener(eventName, this.listeners[eventName])
+            }
+        }
+        , destroy: function(options){
+            for (var eventName in this.listeners){
+                options.svgElement.removeEventListener(eventName, this.listeners[eventName])
+            }   
+        }
+    }
+});
 
         let mainGroup = document.getElementById("caliperRullers");
         let vernierGroup = document.getElementById("vernierRullers");
@@ -197,18 +249,9 @@ limitations under the License.
         const vernierTicksWidth = "0.2mm";
         const vTy1 = "127.0mm";
         const maxDisplacementCM = 13.5;
-
-        const $screen = document.getElementById('screen');        
-        const $canvas = document.getElementById('can');
-
+        
         let calipTypesChecked = [];
         let decimalsChecked = [];
-                
-        let cw = $screen.width.baseVal.value;
-        let ch = $screen.height.baseVal.value;        
-        $canvas.width = cw;
-        $canvas.height = ch;
-                       
         
         function diffFloatStringMM(a, b) {
             return (parseFloat(a)-parseFloat(b)).toString() + "mm";
@@ -394,49 +437,15 @@ limitations under the License.
         document.getElementById("reading").innerHTML = String(position);                      
 
     </script>
-
-    <script id="zoomScript" defer>
-        let $tempCanvas = document.createElement('canvas');
-        let $realCanvas = document.getElementById('can');
-
-        let rcw = document.getElementById('screen').width.baseVal.value;
-        let rch = document.getElementById('screen').height.baseVal.value;
-        $realCanvas.width = rcw;
-        $realCanvas.height = rch;
-        $tempCanvas.width = rcw;
-        $tempCanvas.height = rch;
-        let tctx = $tempCanvas.getContext('2d');
-        let screenContent = document.getElementById('screen').outerHTML;            
-        let vCanvg = canvg.Canvg.fromString(tctx, screenContent);            
-        vCanvg.render();
-
-        function cleanScreen () {        
-            document.getElementById('screenDiv').innerHTML = "";
-            document.getElementById('screenDiv').remove();
-        }
-
-        function rescaleCanvas (value) {  
-            let ctx = $realCanvas.getContext('2d');                          
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, rcw, rch);            
-            $realCanvas.width = rcw*value;
-            $realCanvas.height = rch*value;          
-            ctx.drawImage($tempCanvas,0,0,rcw,rch,0,0,rcw*value,rch*value);              
-        }
-
-        rescaleCanvas(document.getElementById('canvasScale').value);
-    </script>
-
+    
     <script>
         function generateHTML () {
             let htmlText = "<html>";
 
             htmlText += '<p>' + document.getElementById('questionText').value + '</p>';
-            htmlText += document.getElementById("outputDiv").outerHTML;
-            htmlText += document.getElementById("canvgScript").outerHTML; 
+            htmlText += document.getElementById("outputDiv").outerHTML;            
             htmlText += "<script>";
-            htmlText += document.getElementById("zoomScript").innerHTML;            
-            htmlText += "cleanScreen(); </"+"script>";
+            htmlText += "<//script>";
             htmlText += "</html>";
             
             return htmlText;
@@ -479,11 +488,7 @@ limitations under the License.
         function generateSample() {                        
             updateCalipType();
             updateDivisions();            
-            moveVernier(); 
-            let screenContent = document.getElementById('screen').outerHTML;            
-            vCanvg = canvg.Canvg.fromString(tctx, screenContent);            
-            vCanvg.render();
-            rescaleCanvas(document.getElementById('canvasScale').value);
+            moveVernier();
             document.getElementById("reading").innerHTML = String(position);
         }
     </script>
