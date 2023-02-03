@@ -96,8 +96,8 @@ limitations under the License.
     <span>Reading: <span id="reading"></span> mm</span>
 
     <div id="outputDiv">
-        <div id="screenDiv" style="max-height:400px;overflow:scroll;border-style:solid;background-color:papayawhip;">
-            <svg id="screen" width="760mm" height="300mm" xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>
+        <div id="screenDiv" style="height:300px;overflow:hidden;border-style:solid;background-color:papayawhip;">
+            <svg id="screen" width=100% height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <g id="firstGroup">
                     <svg id="caliperSmallJawVernier" height="82.096mm" width="57.845mm" x="43.000mm" y="5.500mm">
                         <g transform="translate(-31.447 -159.78)">
@@ -146,66 +146,106 @@ limitations under the License.
         </div>                        
     </div>
    	
-    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.5.0/dist/svg-pan-zoom.min.js"></script>
+    <script id="svgPanZoomSrc" src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.5.0/dist/svg-pan-zoom.min.js"></script>
+    <script id="hammerSrc" src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
     
+    <script type="text/javascript" id="svgPanZoomConfig">
+        //var $screen = document.getElementById("screen");        
+        //window.onload = function() {
+        var eventsHandler;
+
+        eventsHandler = {
+          haltEventListeners: ['touchstart', 'touchend', 'touchmove', 'touchleave', 'touchcancel']
+        , init: function(options) {
+            var instance = options.instance
+              , initialScale = 1
+              , pannedX = 0
+              , pannedY = 0
+
+            // Init Hammer
+            // Listen only for pointer and touch events
+            this.hammer = Hammer(options.svgElement, {
+              inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
+            })
+
+            // Enable pinch
+            this.hammer.get('pinch').set({enable: true})
+
+            // Handle double tap
+            this.hammer.on('doubletap', function(ev){
+              instance.zoomIn()
+            })
+
+            // Handle pan
+            this.hammer.on('panstart panmove', function(ev){
+              // On pan start reset panned variables
+              if (ev.type === 'panstart') {
+                pannedX = 0
+                pannedY = 0
+              }
+
+              // Pan only the difference
+              instance.panBy({x: ev.deltaX - pannedX, y: ev.deltaY - pannedY})
+              pannedX = ev.deltaX
+              pannedY = ev.deltaY
+            })
+
+            // Handle pinch
+            this.hammer.on('pinchstart pinchmove', function(ev){
+              // On pinch start remember initial zoom
+              if (ev.type === 'pinchstart') {
+                initialScale = instance.getZoom()
+                instance.zoomAtPoint(initialScale * ev.scale, {x: ev.center.x, y: ev.center.y})
+              }
+
+              instance.zoomAtPoint(initialScale * ev.scale, {x: ev.center.x, y: ev.center.y})
+            })
+
+            // Prevent moving the page on some devices when panning over SVG
+            options.svgElement.addEventListener('touchmove', function(e){ e.preventDefault(); });
+          }
+
+        , destroy: function(){
+            this.hammer.destroy()
+          }
+        }
+
+        beforePan = function(oldPan, newPan){
+          var stopHorizontal = false
+            , stopVertical = false
+            , gutterWidth = 10
+            , gutterHeight = 10
+              // Computed variables
+            , sizes = this.getSizes()
+            , leftLimit = -((sizes.viewBox.x + sizes.viewBox.width) * sizes.realZoom) + gutterWidth
+            , rightLimit = sizes.width - gutterWidth - (sizes.viewBox.x * sizes.realZoom)
+            , topLimit = -((sizes.viewBox.y + sizes.viewBox.height) * sizes.realZoom) + gutterHeight
+            , bottomLimit = sizes.height - gutterHeight - (sizes.viewBox.y * sizes.realZoom)
+
+          customPan = {}
+          customPan.x = Math.max(leftLimit, Math.min(rightLimit, newPan.x))
+          customPan.y = Math.max(topLimit, Math.min(bottomLimit, newPan.y))
+
+          return customPan
+        }
+
+        // Expose to window namespace for testing purposes
+        panZoom = svgPanZoom('#screen', {
+            zoomEnabled: true
+            , controlIconsEnabled: true
+            , fit: 1
+            , center: 1
+            , zoomScaleSensitivity: 0.5
+            , minZoom: 1.0
+            , maxZoom: 40
+            , beforePan: beforePan
+            , customEventsHandler: eventsHandler
+        });
+      //};
+        </script>
+
     <script type="text/javascript" id="caliperGenerator">
-
-var svgActive = false, svgHovered = false
-
-// Expose to window namespace for testing purposes
-let panZoom = svgPanZoom('#screen', {
-    zoomScaleSensitivity: 0.3,
-    maxZoom: 40,
-    zoomEnabled: true,
-    controlIconsEnabled: true,
-    omEnabled: false,
-    fit: 1,
-    center: 1,
-    customEventsHandler: {
-        init: function(options){
-            function updateSvgClassName(){
-                options.svgElement.setAttribute('class', '' + (svgActive ? 'active':'') + (svgHovered ? ' hovered':''))
-            }
-
-            this.listeners = {
-                click: function(){
-                    if (svgActive) {
-                        options.instance.disableZoom()
-                        svgActive = false
-                    } else {
-                        options.instance.enableZoom()
-                        svgActive = true
-                    }
-
-                    updateSvgClassName()
-                },
-                mouseenter: function(){
-                    svgHovered = true
-                    updateSvgClassName()
-                },
-                mouseleave: function(){
-                    svgActive = false
-                    svgHovered = false
-                    options.instance.disableZoom()
-
-                    updateSvgClassName()
-                }
-            }
-
-            this.listeners.mousemove = this.listeners.mouseenter
-
-            for (var eventName in this.listeners){
-                options.svgElement.addEventListener(eventName, this.listeners[eventName])
-            }
-        }
-        , destroy: function(options){
-            for (var eventName in this.listeners){
-                options.svgElement.removeEventListener(eventName, this.listeners[eventName])
-            }   
-        }
-    }
-});
 
         let mainGroup = document.getElementById("caliperRullers");
         let vernierGroup = document.getElementById("vernierRullers");
@@ -443,9 +483,10 @@ let panZoom = svgPanZoom('#screen', {
             let htmlText = "<html>";
 
             htmlText += '<p>' + document.getElementById('questionText').value + '</p>';
-            htmlText += document.getElementById("outputDiv").outerHTML;            
-            htmlText += "<script>";
-            htmlText += "<//script>";
+            htmlText += document.getElementById("outputDiv").outerHTML;
+            htmlText += document.getElementById("svgPanZoomSrc").outerHTML;
+            htmlText += document.getElementById("hammerSrc").outerHTML;
+            htmlText += document.getElementById("svgPanZoomConfig").outerHTML;
             htmlText += "</html>";
             
             return htmlText;
