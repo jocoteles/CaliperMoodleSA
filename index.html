@@ -1,5 +1,5 @@
 <!--
-Copyright 2022 João T. Carvalho-Neto
+Copyright 2023 João T. Carvalho-Neto
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -150,9 +150,7 @@ limitations under the License.
     <script id="hammerSrc" src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
     
-    <script type="text/javascript" id="svgPanZoomConfig">
-        //var $screen = document.getElementById("screen");        
-        //window.onload = function() {
+    <script type="text/javascript" id="svgPanZoomConfig">        
         var eventsHandler;
 
         eventsHandler = {
@@ -216,7 +214,6 @@ limitations under the License.
             , stopVertical = false
             , gutterWidth = 10
             , gutterHeight = 10
-              // Computed variables
             , sizes = this.getSizes()
             , leftLimit = -((sizes.viewBox.x + sizes.viewBox.width) * sizes.realZoom) + gutterWidth
             , rightLimit = sizes.width - gutterWidth - (sizes.viewBox.x * sizes.realZoom)
@@ -229,8 +226,7 @@ limitations under the License.
 
           return customPan
         }
-
-        // Expose to window namespace for testing purposes
+        
         panZoom = svgPanZoom('#screen', {
             zoomEnabled: true
             , controlIconsEnabled: true
@@ -238,12 +234,11 @@ limitations under the License.
             , center: 1
             , zoomScaleSensitivity: 0.5
             , minZoom: 1.0
-            , maxZoom: 40
+            , maxZoom: 80
             , beforePan: beforePan
             , customEventsHandler: eventsHandler
-        });
-      //};
-        </script>
+        });      
+    </script>
 
     <script type="text/javascript" id="caliperGenerator">
 
