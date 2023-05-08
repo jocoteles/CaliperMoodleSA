@@ -13,6 +13,6 @@ This is a Moodle Short Answer question generator with the objective of teaching 
 
 After saving the Moodle XML file on the computer, the teacher (or course manager) must log in to the corresponding Moodle course and access the Question Bank available in Course Administration. There, a category of questions must be created that will receive the questions from the caliper. Then, import it to the created category by selecting the option for *Moodle XML file format* and uploading the file saved on the computer. With this, the questions can be used in a Quiz Activity by adding a random question chosen from the created category.
 
-This project uses the Javascript libraries [canvg](https://github.com/canvg/canvg) and [FileSaver.js](https://github.com/eligrey/FileSaver.js/).
+This project uses the Javascript libraries [svg-pan-zoom](https://github.com/bumbu/svg-pan-zoom), [hammerjs](https://github.com/hammerjs/hammer.js) and [FileSaver.js](https://github.com/eligrey/FileSaver.js/).
 
 The Caliper svg parts were adapted from [Caliper Wikipedia](https://en.wikipedia.org/wiki/File:Vernier_caliper.svg).

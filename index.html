@@ -93,7 +93,11 @@ limitations under the License.
 	
     <button onclick="generateXML()"><strong>Generate Moodle XML file</strong></button>    
     <button onclick="generateSample()">Render a new sample</button>
-    <span>Reading: <span id="reading"></span> mm</span>
+    <div>
+        <input type="checkbox" id="showReading" value="readingOn" onchange="showReading()">
+        <label for="comma"> Show reading: </label>
+        <span id="reading"></span>
+    </div>
 
     <div id="outputDiv">
         <div id="screenDiv" style="height:300px;overflow:hidden;border-style:solid;background-color:papayawhip;">
@@ -296,13 +300,13 @@ limitations under the License.
         }
 
         function moveVernier() {
-			let val = Math.round(Math.random()*5400);                        
-			let step = parseFloat(bodyMinorStep)*0.02;
+            let res = 1.0/vernierDiv;
+			let val = Math.round(Math.random()*5400*0.02/res);                                    			
+			let step = parseFloat(bodyMinorStep)*res;
             let x = parseInt(val)*step;
             for (let i = 0; i < vernierX0.length; i++) {
                 vernierElements[i].setAttribute("x", (parseFloat(vernierX0[i]) + x).toString() + 'mm');                
-            }			
-			let res = 1.0/vernierDiv;			
+            }
 			let na = 1;
 			if (vernierDiv >= 20) na = 2;
 			position = x/parseFloat(bodyMinorStep);
@@ -463,13 +467,19 @@ limitations under the License.
             if (decimalsChecked.length == 1) decimalsChecked[0].disabled = true;
         }
 
+        function showReading() {
+            let reading = document.getElementById("reading");
+            if (document.getElementById('showReading').checked) reading.innerHTML = String(position) + ' mm';
+            else reading.innerHTML = '';
+        }
+
         position = 0.0;
         caliperMount();
         updateCalipType();
         updateDivisions();
         updateDecimal();
-        moveVernier();  
-        document.getElementById("reading").innerHTML = String(position);                      
+        moveVernier();
+        showReading();
 
     </script>
     
@@ -503,7 +513,8 @@ limitations under the License.
                 let htmlQuestionText = generateHTML();
                 let penalty = document.getElementById('penalty').value;
                 let answers = '';
-                let posString = String(position);                
+                let posString = String(position);    
+                //Estou aqui: if (vernierDiv == 10) {}            
                 for (let decimal of decimalsChecked) {                    
                     if (decimal.value == 'dot') answers += baseAnswer.replace('#answer', posString.replace(',', '.'));
                     else answers += baseAnswer.replace('#answer', posString.replace('.', ','));
@@ -525,7 +536,7 @@ limitations under the License.
             updateCalipType();
             updateDivisions();            
             moveVernier();
-            document.getElementById("reading").innerHTML = String(position);
+            showReading();
         }
     </script>
 
