@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/476100745.svg)](https://zenodo.org/badge/latestdoi/476100745)
+
 **CaliperMoodleSA** - Moodle Short Answers question generator for Caliper
 ==============
 
